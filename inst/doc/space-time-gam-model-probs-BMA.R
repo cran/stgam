@@ -148,7 +148,7 @@ mod_comp_tab$`Pr(M)` = c("--", paste0(format(round(p1_vec*100, digits=1), nsmall
 mod_comp_tab
 
 ## ----evalmods---------------------------------------------------------------------------
-stvc_res_gam = evaluate_models(data = productivity, 
+stvc_res_gam = evaluate_models(input_data = productivity, 
                                target_var = "privC",
                                covariates = c("unemp", "pubC"),
                                coords_x = "X",
@@ -165,7 +165,7 @@ stvc_mods = gam_model_probs(stvc_res_gam, n = 10)
 stvc_mods
 
 ## ----evalmods2--------------------------------------------------------------------------
-svc_res_gam = evaluate_models(data = productivity |> filter(year == "1970"), 
+svc_res_gam = evaluate_models(input_data = productivity |> filter(year == "1970"), 
                               target_var = "privC",
                               covariates = c("unemp", "pubC"),
                               coords_x = "X",
@@ -188,13 +188,13 @@ svc_bma <- do_bma(model_table = svc_mods,
                   terms = c("Intercept", "unemp", "pubC"),
                   thresh = 0.1,
                   relative = FALSE, 
-                  data = productivity |> filter(year == "1970"))
+                  input_data = productivity |> filter(year == "1970"))
 # STVC with relative probabilities
 stvc_bma <- do_bma(model_table = stvc_mods, 
                   terms = c("Intercept", "unemp", "pubC"),
                   thresh = 0.1,
                   relative = TRUE, 
-                  data = productivity)
+                  input_data = productivity)
 
 ## ----bmamap1, fig.height = 4, fig.width = 7, fig.cap = "The spatial variation of the Public captial generated using a Bayesian Model Avaergaing approach."----
 # join

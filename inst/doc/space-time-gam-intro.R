@@ -6,6 +6,7 @@ knitr::opts_chunk$set(
 )
 
 ## ----eval = F---------------------------------------------------------------------------
+#  install.packages("stgam", dependencies = TRUE)
 #  remotes::install_github("lexcomber/stgam")
 
 ## ----warning=F, message=F---------------------------------------------------------------
@@ -68,7 +69,7 @@ res |> select(b0, b1, b2) |>
 terms = c("Intercept", "unemp", "pubC")
 res <-  calculate_vcs(model = svc.gam, 
                       terms = terms, 
-                      data = productivity |> filter(year == "1970"))
+                      input_data = productivity |> filter(year == "1970"))
 summary(res[, paste0("b_",terms)])
 
 ## ----ch2svccoefs, fig.height = 7, fig.width = 7, fig.cap = "The spatially varying coefficient (SVC) estimates."----
@@ -116,7 +117,7 @@ tvc.gam = gam(privC ~ 0 +
 terms = c("Intercept", "unemp", "pubC")
 res <-  calculate_vcs(model = tvc.gam, 
                       terms = terms, 
-                      data = productivity)
+                      input_data = productivity)
 summary(res[, paste0("b_",terms)])
 
 ## ----ch2tvccoefs, eval = T, echo = T, fig.height = 3, fig.width = 7, message=F, warning=F, fig.cap = "Trends in the temporally varying coefficient estimates."----
@@ -144,7 +145,7 @@ stvc.gam = gam(privC ~ 0 +
 terms = c("Intercept", "unemp", "pubC")
 res <-  calculate_vcs(model = stvc.gam, 
                       terms = terms, 
-                      data = productivity)
+                      input_data = productivity)
 summary(res[, paste0("b_",terms)])
 
 ## ----eval = T---------------------------------------------------------------------------

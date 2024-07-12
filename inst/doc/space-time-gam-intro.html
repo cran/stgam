@@ -427,8 +427,10 @@ only uses one function from the <code>stgam</code> package!</li>
 </div>
 <div id="data-and-packagees" class="section level2">
 <h2>Data and Packagees</h2>
-<p>You should install the <code>stgam</code> package:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;lexcomber/stgam&quot;</span>)</span></code></pre></div>
+<p>You should install the <code>stgam</code> package either from CRAN or
+from GitHub:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;stgam&quot;</span>, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;lexcomber/stgam&quot;</span>)</span></code></pre></div>
 <p>And then make sure the required packages and data are loaded:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># load the packages</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(stgam)</span>
@@ -544,9 +546,9 @@ function as below:</p>
 #&gt; indicate that k is too low, especially if edf is close to k&#39;.
 #&gt; 
 #&gt;                     k&#39;   edf k-index p-value  
-#&gt; s(X,Y):Intercept 32.00  2.00    0.82   0.050 *
-#&gt; s(X,Y):unemp     33.00  2.00    0.82   0.030 *
-#&gt; s(X,Y):pubC      33.00  3.67    0.82   0.015 *
+#&gt; s(X,Y):Intercept 32.00  2.00    0.82   0.040 *
+#&gt; s(X,Y):unemp     33.00  2.00    0.82   0.050 *
+#&gt; s(X,Y):pubC      33.00  3.67    0.82   0.045 *
 #&gt; ---
 #&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 # model summary
@@ -630,7 +632,7 @@ create the model:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>terms <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;unemp&quot;</span>, <span class="st">&quot;pubC&quot;</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>res <span class="ot">&lt;-</span>  <span class="fu">calculate_vcs</span>(<span class="at">model =</span> svc.gam, </span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>                      <span class="at">terms =</span> terms, </span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>                      <span class="at">data =</span> productivity <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">&quot;1970&quot;</span>))</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>                      <span class="at">input_data =</span> productivity <span class="sc">|&gt;</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">&quot;1970&quot;</span>))</span>
 <span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="fu">summary</span>(res[, <span class="fu">paste0</span>(<span class="st">&quot;b_&quot;</span>,terms)])</span>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt;   b_Intercept            b_unemp              b_pubC       </span></span>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt;  Min.   :-19058.713   Min.   :-2848.148   Min.   :-0.1822  </span></span>
@@ -710,7 +712,7 @@ turn:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>terms <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;unemp&quot;</span>, <span class="st">&quot;pubC&quot;</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>res <span class="ot">&lt;-</span>  <span class="fu">calculate_vcs</span>(<span class="at">model =</span> tvc.gam, </span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>                      <span class="at">terms =</span> terms, </span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>                      <span class="at">data =</span> productivity)</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>                      <span class="at">input_data =</span> productivity)</span>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="fu">summary</span>(res[, <span class="fu">paste0</span>(<span class="st">&quot;b_&quot;</span>,terms)])</span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;   b_Intercept       b_unemp            b_pubC     </span></span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt;  Min.   :-1057   Min.   :-3733.9   Min.   :1.462  </span></span>
@@ -769,7 +771,7 @@ estimates from the STVC-GAM model summarised:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>terms <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="st">&quot;unemp&quot;</span>, <span class="st">&quot;pubC&quot;</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>res <span class="ot">&lt;-</span>  <span class="fu">calculate_vcs</span>(<span class="at">model =</span> stvc.gam, </span>
 <span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>                      <span class="at">terms =</span> terms, </span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>                      <span class="at">data =</span> productivity)</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>                      <span class="at">input_data =</span> productivity)</span>
 <span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="fu">summary</span>(res[, <span class="fu">paste0</span>(<span class="st">&quot;b_&quot;</span>,terms)])</span>
 <span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="co">#&gt;   b_Intercept          b_unemp              b_pubC        </span></span>
 <span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="co">#&gt;  Min.   :-9767.27   Min.   :-1581.313   Min.   :0.009162  </span></span>

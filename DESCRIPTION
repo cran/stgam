@@ -1,7 +1,7 @@
 Package: stgam
 Title: Spatially and Temporally Varying Coefficient Models Using
         Generalized Additive Models
-Version: 0.0.1.0
+Version: 0.0.1.1
 Authors@R: c(
     person("Lex", "Comber", email = "a.comber@leeds.ac.uk", role = c("aut", "cre")),
     person("Paul", "Harris", email = "paul.harris@rothamsted.ac.uk", role = c("ctb")),
@@ -26,6 +26,6 @@ Imports: cowplot, doParallel, dplyr, foreach, ggplot2, glue, grDevices,
         magrittr, metR, mgcv, parallel, tidyselect
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-06-24 15:05:36 UTC; geoaco
+Packaged: 2024-07-12 11:32:53 UTC; geoaco
 Repository: CRAN
-Date/Publication: 2024-06-25 14:20:02 UTC
+Date/Publication: 2024-07-12 12:40:02 UTC
