@@ -15,3 +15,13 @@
 # stgam 0.0.1.2
 
 * corrected and genericised the `do_bma` function
+
+# stgam 0.0.1.3
+
+* expanded the output of `do_bma` to include averaged $\hat{y}$ and working residuals
+* returns weighted vary coefficient estimates appended to input data
+
+# stgam 1.0.0
+
+* space-time GAMs are reformatted to include Tensor Product smooths for combined space-time 
+* modelling averaging is removed

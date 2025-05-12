@@ -1,7 +1,7 @@
 Package: stgam
 Title: Spatially and Temporally Varying Coefficient Models Using
         Generalized Additive Models
-Version: 0.0.1.2
+Version: 1.0.0
 Authors@R: c(
     person("Lex", "Comber", email = "a.comber@leeds.ac.uk", role = c("aut", "cre")),
     person("Paul", "Harris", email = "paul.harris@rothamsted.ac.uk", role = c("ctb")),
@@ -11,21 +11,20 @@ Author: Lex Comber [aut, cre],
   Paul Harris [ctb],
   Chris Brunsdon [ctb]
 Maintainer: Lex Comber <a.comber@leeds.ac.uk>
-Description: A framework for specifying spatially, temporally and spatially-and-temporally varying coefficient models using Generalized Additive Models with Gaussian Process smooths. The smooths are parameterised with location and / or time attributes. Importantly the framework supports the investigation of the presence and nature of any space-time dependencies in the data, allows the user to evaluate different model forms (specifications) and to pick the most probable model or to combine multiple varying coefficient models using Bayesian Model Averaging. For more details see: Brunsdon et al (2023) <doi:10.4230/LIPIcs.GIScience.2023.17>, Comber et al (2023) <doi:10.4230/LIPIcs.GIScience.2023.22> and Comber et al (2024) <doi:10.1080/13658816.2023.2270285>.
+Description: A framework for specifying spatially, temporally and spatially-and-temporally varying coefficient models using Generalized Additive Models with smooths. The smooths are parameterised with location, time and predictor variables. The framework supports the investigation of the presence and nature of any space-time dependencies in the data by evaluating multiple model forms (specifications) using a Generalized Cross-Validation score. The workflow sequence is to: i) Prepare the data by lengthening it to have a single location and time variables for each observation. ii) Evaluate all possible spatial and/or temporal models in which each predictor is specified in different ways. iii) Evaluate each model and pick the best one. iv) Create the final model. v) Calculate the varying coefficient estimates to quantify how the relationships between the target and predictor variables vary over space, time or space-time. vi) Create maps, time series plots etc. For more details see: Comber et al (2023) <doi:10.4230/LIPIcs.GIScience.2023.22>, Comber et al (2024) <doi:10.1080/13658816.2023.2270285>  and Comber et al (2004) <doi:10.3390/ijgi13120459>.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.2.3
-Suggests: cols4all, knitr, purrr, rmarkdown, sf, testthat (>= 3.0.0),
-        tidyr
+RoxygenNote: 7.3.2
+Suggests: cols4all, knitr, ggplot2, cowplot, purrr, rmarkdown, sf,
+        testthat (>= 3.0.0), tidyr
 Config/testthat/edition: 3
 URL: https://github.com/lexcomber/stgam
 BugReports: https://github.com/lexcomber/stgam/issues
-Depends: R (>= 2.10),
+Depends: R (>= 4.1.0), mgcv (>= 1.9-1), glue
 LazyData: true
-Imports: cowplot, doParallel, dplyr, foreach, ggplot2, glue, grDevices,
-        magrittr, metR, mgcv (>= 1.9-1), parallel, tidyselect
+Imports: foreach, doParallel, parallel, dplyr
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-07-31 10:21:55 UTC; geoaco
+Packaged: 2025-05-12 15:38:17 UTC; geoaco
 Repository: CRAN
-Date/Publication: 2024-07-31 14:30:02 UTC
+Date/Publication: 2025-05-12 16:30:02 UTC
