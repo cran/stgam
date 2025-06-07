@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 # library(tidyverse)
 # # load the data
 # setwd("~/Dropbox/Lex_GGP_GAM/stgam/")
-# ## see data_prep_stgam_v1.0.0.R fgor data creation
+# ## see data_prep_stgam_v1.0.0.R for data creation
 # load("vignettes/hp_data.RData")
 # load("vignettes/lb.RData")
 # # data(productivity)
@@ -116,12 +116,12 @@ hp_data <-
 # map the data layers
 lb |> 
   ggplot() + geom_sf() +
-  geom_point(data = hp_data |> st_drop_geometry(), aes(x = Xo, y = Yo, col = priceper)) +
+  geom_point(data = hp_data, aes(x = Xo, y = Yo, col = priceper)) +
   scale_color_viridis_c(option = "magma") +
   theme_bw()  +xlab("") + ylab("")
 
 ## ----message = F, warning=F-------------------------------------------------------------------------------------------
-#transform to km
+# transform to km
 lb <- st_transform(lb, pipeline = "+proj=pipeline +step +proj=unitconvert +xy_out=km")
 # remove the projection to avoid confusing ggplot
 st_crs(lb) <- NA
@@ -264,7 +264,7 @@ summary(gam.3)
 
 ## ----smoothplot3, fig.height = 6, fig.width = 7, fig.cap = "A plot of a spatial smooth over 7 approximately annual time periods."----
 # 1. create time intervals (see the creation of days variable above)
-pred_days = seq(0, 2190, 365)/100
+pred_days = seq(365, 2555, 365)/100
 # 2. create coefficient estimates for each time period (n = 7) 
 res_out <- NULL
 for (i in pred_days){
@@ -328,7 +328,7 @@ summary(gam.5)
 ## ----gam.5.new--------------------------------------------------------------------------------------------------------
 gam.5.new <- gam(priceper ~0 + Intercept + s(X,Y,by=Intercept) + s(days, by=Intercept) + pef,
                 data = hp_data |> mutate(Intercept = 1))
-summary(gam.5)
+summary(gam.5.new)
 
 ## ----data_prep--------------------------------------------------------------------------------------------------------
 hp_data <- 
@@ -431,7 +431,7 @@ plot_grid(p_time, plot_grid(p_sp1, p_sp2, ncol = 1), nrow = 1, rel_widths = c(3.
 
 ## ----smoothplot.st1.2, fig.height = 6, fig.width = 7, fig.cap = "The changes over time of the spatial distrubtuion of the `pef` coefficient estimate."----
 # 1. create time intervals (as above)
-pred_days = seq(0, 2190, 365)/100
+pred_days = seq(365, 2555, 365)/100
 # 2. create coefficient estimates for each time period (n = 7) 
 res_out <- matrix(nrow = nrow(l_grid), ncol = 0)
 for (i in pred_days){
@@ -444,10 +444,15 @@ for (i in pred_days){
 }
 
 # 3. name with years and join to the grid
-colnames(res_out) <- paste0("PEF", "_", 2018:2024)
+colnames(res_out) <- paste0("Y", "_", 2018:2024)
+# define a title
+tit <-expression(paste(""*beta[`pef`]*"")) 
 l_grid |> cbind(res_out) |>
   # select the variables and pivot longer
-  select(starts_with("PEF")) |> 
+  select(starts_with("Y_")) |> 
+  # rename
+  rename(`2018` = "Y_2018", `2019` = "Y_2019", `2020` = "Y_2020",
+         `2021` = "Y_2021", `2022` = "Y_2022", `2023` = "Y_2023", `2024` = "Y_2024") |>
   pivot_longer(-geometry) |>
   # make the new days object a factor (to enforce plotting order)
   mutate(name = factor(name, levels = colnames(res_out))) |>
@@ -475,8 +480,10 @@ l_grid |> cbind(res_out) |>
     axis.ticks=element_blank())  
 
 ## ----gam.st2----------------------------------------------------------------------------------------------------------
-gam.st2 <- gam(priceper~0 + Intercept + s(X,Y,by=Intercept) + s(days, by=Intercept) 
-              + pef + s(X,Y, by = pef) + s(days, by = pef), data = hp_data)
+gam.st2 <- gam(priceper~0 + Intercept + 
+                 s(X,Y,by=Intercept) + s(days, by=Intercept) + 
+                 pef + s(X,Y, by = pef) + s(days, by = pef), 
+               data = hp_data)
 summary(gam.st2)
 
 ## ----smoothplot.st2, fig.height = 8, fig.width = 7, fig.cap = "`mgcv` plots of the seperate space and time smooths for the `pef` predictor variable."----
@@ -511,7 +518,7 @@ head(hp_data)
 load("stvc_mods.RData")
 
 ## ---------------------------------------------------------------------------------------------------------------------
-mod_comp <- gam_model_rank(stvc_mods)
+mod_comp <- gam_model_rank(stvc_mods, n= 10)
 # have a look
 mod_comp |> select(-f) 
 
@@ -519,8 +526,10 @@ mod_comp |> select(-f)
 f <- as.formula(mod_comp$f[1])
 f
 
-## ----cache = T--------------------------------------------------------------------------------------------------------
+## ----final_mod, cache = T---------------------------------------------------------------------------------------------
+# specify the model
 gam.m <- gam(f, data = hp_data, method = "REML")
+# check k
 k.check(gam.m)
 
 ## ---------------------------------------------------------------------------------------------------------------------
@@ -531,17 +540,19 @@ vcs <- calculate_vcs(input_data = hp_data,
                     mgcv_model = gam.m, 
                     terms = c("Intercept", "pef", "beds"))
 
-## ---------------------------------------------------------------------------------------------------------------------
+## ----warning=F, message=FALSE-----------------------------------------------------------------------------------------
 vcs |> select(starts_with("b_")) |>
   apply(2, summary) |> round(1)
 
 ## ----final_time, fig.height = 3, fig.width = 8, fig.cap = "The changes over time of the coefficient estimates of the final model."----
-vcs |> select(dot, starts_with("b_")) |> 
+vcs |> 
+  select(dot, starts_with("b_")) |> 
   rename(`Intercept` = b_Intercept,
          `Potential Energy Efficiency` = b_pef,
          `Bedrooms` = b_beds) |>
   pivot_longer(-dot) |>
-  mutate(name = factor(name, levels=c("Intercept","Potential Energy Efficiency", "Bedrooms"))) |>
+  mutate(name = factor(name, 
+                       levels=c("Intercept","Potential Energy Efficiency", "Bedrooms"))) |>
   group_by(dot, name) |>
   summarise(
     lower = quantile(value, 0.25),
@@ -558,13 +569,15 @@ vcs |> select(dot, starts_with("b_")) |>
 
 ## ----svccoefs, fig.height = 6, fig.width = 7, fig.cap = "The varying `pef` (Potential Energy Efficiency) coefficient estimates over space and time."----
 # make spatial data  
-vcs_sf <- vcs |> st_as_sf(coords = c("X", "Y"), remove = F) 
+vcs_sf <- 
+  vcs |> 
+  st_as_sf(coords = c("X", "Y"), remove = F) 
 # plot 
 ggplot()  + 
   geom_sf(data = lb) +
   geom_sf(data = vcs_sf, aes(col = b_pef)) + 
   scale_colour_continuous_c4a_div(palette="brewer.rd_bu", 
-                                name = "Potential\nEnergy Efficiency") + 
+                                  name = "Potential\nEnergy Efficiency") + 
   facet_wrap(~yot) + 
   theme_bw() + 
   theme(
@@ -582,8 +595,8 @@ ggplot()  +
 
 ## ----svccoefs2, cache = T,  fig.height = 6, fig.width = 7, fig.cap = "The varying `beds` (Bedrooms) coefficient estimates over time and the grid surface."----
 # create time slices
-years  <- 2018:2024
-# calculate  over the grid for each time slice
+years <- 2018:2024
+# calculate over the grid for each time slice
 res_out <- matrix(nrow = nrow(l_grid), ncol = 0)
 for (i in 1:length(years)){
   # convert years to days
@@ -603,19 +616,25 @@ for (i in 1:length(years)){
   res_out <- cbind(res_out, res.i)
   cat(years[i], "\t")
 }
+# title
+tit <-expression(paste(""*beta[`beds`]*"")) 
 # join to the grid
 l_grid |> cbind(res_out) |>
   # select the variables and pivot longer
   select(starts_with("b_beds")) |> 
+  # rename
+  rename(`2018` = "b_beds_2018", `2019` = "b_beds_2019", 
+         `2020` = "b_beds_2020", `2021` = "b_beds_2021", 
+         `2022` = "b_beds_2022", `2023` = "b_beds_2023", 
+         `2024` = "b_beds_2024") |>  
   pivot_longer(-geometry) |>
   # make the new days object a factor (to enforce plotting order)
-  mutate(name = factor(name, levels = paste0("b_beds_", 2018:2024))) |>
-
+  mutate(name = factor(name, levels = 2018:2024)) |>
    # 4. and plot 
   ggplot() + 
   geom_sf(aes(fill = value), col = NA) +
   # adjust default shading
-  scale_fill_continuous_c4a_div("brewer.rd_yl_bu", name = "Bedrooms") +
+  scale_fill_continuous_c4a_div("brewer.rd_yl_bu", name = tit) +
   # facet
   facet_wrap(~name, ncol = 3) +
   # apply and modify plot theme
