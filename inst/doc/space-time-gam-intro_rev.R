@@ -256,7 +256,7 @@ l_grid |> mutate(yhat = yhat) |>
 
 ## ----gam.3------------------------------------------------------------------------------------------------------------
 # the third GAM
-gam.3 <- gam(priceper~t2(X,Y,days, d = c(2,1)), data = hp_data)
+gam.3 <- gam(priceper~te(X,Y,days, d = c(2,1), bs=c('tp','cr')), data = hp_data)
 summary(gam.3)
 
 ## ----eval = F---------------------------------------------------------------------------------------------------------
@@ -391,7 +391,7 @@ plot_grid(p1, p2)
 
 ## ----gam.st1----------------------------------------------------------------------------------------------------------
 gam.st1 <- gam(priceper~0 + Intercept + s(X,Y,by=Intercept) + s(days, by=Intercept) +  
-                pef + t2(X,Y,days, d= c(2,1), by = pef), 
+                pef + te(X,Y,days,d = c(2,1),bs=c('tp','cr'), by = pef), 
               data = hp_data)
 summary(gam.st1)
 
@@ -509,7 +509,7 @@ head(hp_data)
 #   VC_type = "STVC",
 #   time_var = "days",
 #   ncores = 2)
-# Sys.time() - t1  # about 14 minutes (6 minutes with 15 cores!)
+# Sys.time() - t1  # about 10 minutes (less with more cores!)
 
 ## ----echo = F, eval = T-----------------------------------------------------------------------------------------------
 # precomputed to get through CRAN checks
@@ -575,7 +575,7 @@ vcs_sf <-
 ggplot()  + 
   geom_sf(data = lb) +
   geom_sf(data = vcs_sf, aes(col = b_pef)) + 
-  scale_colour_continuous_c4a_div(palette="brewer.rd_bu", 
+  scale_colour_continuous_c4a_div(palette="brewer.rd_yl_bu", 
                                   name = "Potential\nEnergy Efficiency") + 
   facet_wrap(~yot) + 
   theme_bw() + 
@@ -592,7 +592,7 @@ ggplot()  +
 		axis.text=element_blank(),
     axis.ticks=element_blank())  
 
-## ----svccoefs2, cache = T,  fig.height = 6, fig.width = 7, fig.cap = "The varying `beds` (Bedrooms) coefficient estimates over time and the grid surface."----
+## ----svccoefs2, cache = T,  fig.height = 6, fig.width = 7, fig.cap = "The varying `pef` (Potential energy efficiency rating) coefficient estimates over time and the grid surface."----
 # create time slices
 years <- 2018:2024
 # calculate over the grid for each time slice
@@ -620,12 +620,12 @@ tit <-expression(paste(""*beta[`beds`]*""))
 # join to the grid
 l_grid |> cbind(res_out) |>
   # select the variables and pivot longer
-  select(starts_with("b_beds")) |> 
+  select(starts_with("b_pef")) |> 
   # rename
-  rename(`2018` = "b_beds_2018", `2019` = "b_beds_2019", 
-         `2020` = "b_beds_2020", `2021` = "b_beds_2021", 
-         `2022` = "b_beds_2022", `2023` = "b_beds_2023", 
-         `2024` = "b_beds_2024") |>  
+  rename(`2018` = "b_pef_2018", `2019` = "b_pef_2019", 
+         `2020` = "b_pef_2020", `2021` = "b_pef_2021", 
+         `2022` = "b_pef_2022", `2023` = "b_pef_2023", 
+         `2024` = "b_pef_2024") |>  
   pivot_longer(-geometry) |>
   # make the new days object a factor (to enforce plotting order)
   mutate(name = factor(name, levels = 2018:2024)) |>
