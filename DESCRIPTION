@@ -1,30 +1,32 @@
 Package: stgam
 Title: Spatially and Temporally Varying Coefficient Models Using
         Generalized Additive Models
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: c(
     person("Lex", "Comber", email = "a.comber@leeds.ac.uk", role = c("aut", "cre")),
     person("Paul", "Harris", email = "paul.harris@rothamsted.ac.uk", role = c("ctb")),
+    person("Gonzalo", "Irisarri", email = "jirisarr@uwyo.edu", role = c("ctb")),
     person("Chris", "Brunsdon", email = "christopher.brunsdon@mu.ie", role = c("ctb"))
            )
 Author: Lex Comber [aut, cre],
   Paul Harris [ctb],
+  Gonzalo Irisarri [ctb],
   Chris Brunsdon [ctb]
 Maintainer: Lex Comber <a.comber@leeds.ac.uk>
-Description: A framework for specifying spatially, temporally and spatially-and-temporally varying coefficient models using Generalized Additive Models with smooths. The smooths are parameterised with location, time and predictor variables. The framework supports the investigation of the presence and nature of any space-time dependencies in the data by evaluating multiple model forms (specifications) using a Generalized Cross-Validation score. The workflow sequence is to: i) Prepare the data by lengthening it to have a single location and time variables for each observation. ii) Evaluate all possible spatial and/or temporal models in which each predictor is specified in different ways. iii) Evaluate each model and pick the best one. iv) Create the final model. v) Calculate the varying coefficient estimates to quantify how the relationships between the target and predictor variables vary over space, time or space-time. vi) Create maps, time series plots etc. For more details see: Comber et al (2023) <doi:10.4230/LIPIcs.GIScience.2023.22>, Comber et al (2024) <doi:10.1080/13658816.2023.2270285>  and Comber et al (2004) <doi:10.3390/ijgi13120459>.
+Description: A framework for undertaking space and time varying coefficient models (varying parameter models) using a Generalized Additive Model (GAM) with smooths approach. The framework suggests the need to investigate for the presence and nature of any space-time dependencies in the data. It proposes a workflow that creates and refines an initial space-time GAM and includes tools to create and evaluate multiple model forms. The workflow sequence is to: i) Prepare the data by lengthening it to have a single location and time variables for each observation. ii) Create all possible space and/or time models in which each predictor is specified in different ways in smooths. iii) Evaluate each model via their AIC value and pick the best one. iv) Create the final model. v) Calculate the varying coefficient estimates to quantify how the relationships between the target and predictor variables vary over space, time or space-time. vi) Create maps, time series plots etc. The number of knots used in each smooth can be specified directly or iteratively increased. This is illustrated with a climate point dataset of the dry rain forest in South America. This builds on work in Comber et al (2024) <doi:10.1080/13658816.2023.2270285> and Comber et al (2004) <doi:10.3390/ijgi13120459>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.2
-Suggests: cols4all, knitr, ggplot2, cowplot, purrr, rmarkdown, sf,
-        testthat (>= 3.0.0), tidyr
+Suggests: cols4all, knitr, ggplot2, cowplot, rmarkdown, testthat (>=
+        3.0.0), tidyr, lubridate, sf, gratia, kableExtra
 Config/testthat/edition: 3
 URL: https://github.com/lexcomber/stgam
 BugReports: https://github.com/lexcomber/stgam/issues
 Depends: R (>= 4.1.0), mgcv (>= 1.9-1), glue
 LazyData: true
-Imports: foreach, doParallel, parallel, dplyr
+Imports: foreach, doParallel, parallel, dplyr, magrittr, purrr, stringr
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-08-07 14:40:22 UTC; geoaco
+Packaged: 2026-01-29 12:19:52 UTC; geoaco
 Repository: CRAN
-Date/Publication: 2025-08-27 13:50:02 UTC
+Date/Publication: 2026-01-29 12:50:02 UTC

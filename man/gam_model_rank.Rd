@@ -2,7 +2,7 @@
 % Please edit documentation in R/gam_model_rank.R
 \name{gam_model_rank}
 \alias{gam_model_rank}
-\title{Ranks models by GCV, giving the model form for each predictor variable.}
+\title{Ranks models by AIC, giving the model form for each predictor variable.}
 \usage{
 gam_model_rank(res_tab, n = 10)
 }
@@ -12,31 +12,38 @@ gam_model_rank(res_tab, n = 10)
 \item{n}{the number of ranked models to return.}
 }
 \value{
-a \code{tibble} of the 'n' best models, ranked by GCV, with the form of each predictor variable where '---' indicates the absence of a predictor, 'Fixed' that a parametric form was specified,  's_S' a spatial smooth, 's_T'  a temporal smooth and 'te_ST' a spatio-temporal smooth.
+a \code{tibble} of the 'n' best models, ranked by AIC, with the form of each predictor variable where '---' indicates the absence of a predictor, 'Fixed' that a parametric form was specified,  's(S)' a spatial smooth, 's(T)'  a temporal smooth and 'te(ST)' a combined space-time smooth. Model AIC is reported as are the knots in each smooth (\code{ks}) and the formula of each model (\code{f}).
 }
 \description{
-Ranks models by GCV, giving the model form for each predictor variable.
+Ranks models by AIC, giving the model form for each predictor variable.
 }
 \examples{
 require(dplyr)
+require(stringr)
+require(purrr)
 require(doParallel)
+require(sf)
+
 # define input data
-data("hp_data")
+data("chaco")
 input_data <-
-  hp_data |>
+  chaco |>
   # create Intercept as an addressable term
-  mutate(Intercept = 1)
+  mutate(Intercept = 1) |>
+  # remove the geometry
+  st_drop_geometry()
+
 # evaluate different model forms
+# example 1 with 6 models and no `k` adjustment
 svc_mods <-
   evaluate_models(
     input_data = input_data,
-    target_var = "priceper",
-    vars = c("pef"),
+    target_var = "ndvi",
+    vars = c("tmax"),
     coords_x = "X",
     coords_y = "Y",
-    VC_type = "SVC",
-    time_var = NULL,
-    ncores = 2
+    VC_type = "SVC"
   )
+# rank the models
 gam_model_rank(svc_mods)
 }
